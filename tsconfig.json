@@ -1,0 +1,13 @@
+{
+  "include": ["./node_modules/**/*", "src/**/*"],
+  "files": ["global.d.ts", "./node_modules/**/*"],
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist"
+  },
+  "lib": ["es2015"]
+}
