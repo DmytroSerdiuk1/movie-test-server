@@ -1,6 +1,6 @@
 {
-  "include": ["./node_modules/**/*", "src/**/*"],
-  "files": ["global.d.ts", "./node_modules/**/*"],
+  "include": ["src/**/*", "index.ts"],
+  "files": ["global.d.ts"],
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
