@@ -16,6 +16,9 @@ router.get('/movies', authenticateToken, async (req: Request, res: Response) => 
         const data = await prisma.movie.findMany({
             where: {
                 userId: id
+            },
+            orderBy: {
+                date: 'desc'
             }
         })
 
@@ -53,6 +56,7 @@ router.post('/movie', authenticateToken, async (req: Request<any, any, Prisma.Mo
                 data: {
                     title,
                     year,
+                    date: new Date(),
                     image: imageData.url,
                     userId: id
                 }

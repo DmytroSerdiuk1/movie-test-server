@@ -4,7 +4,7 @@ import prisma from "../service/prismaService";
 import {authenticateToken, generateAccessToken} from "../service/jwtService";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt'
-import { sendMessage } from '../helpers/sendMessage';
+import {sendMessage} from '../helpers/sendMessage';
 
 const router = Router()
 
@@ -14,7 +14,7 @@ router.post('/sign-in', async (req: Request<any, any, Prisma.UserCreateInput>, r
         const data = await prisma.user.findUnique({
             where: {
                 name,
-            },
+            }
         }).catch(() => {
             res.status(400).json(sendMessage('Name or password is incorrect'))
         })
@@ -27,7 +27,14 @@ router.post('/sign-in', async (req: Request<any, any, Prisma.UserCreateInput>, r
                 const accessToken = generateAccessToken(data, process.env.ACCESS_TOKEN_EXPIRED_IN)
                 const refreshToken = generateAccessToken(data, process.env.REFRESH_TOKEN_EXPIRED_IN)
                 console.log('SignIn:', data.name, data.id)
-                res.json({user: data, accessToken, refreshToken})
+                res.json({
+                    user: {
+                        id: data.id,
+                        name: data.name
+                    },
+                    accessToken,
+                    refreshToken
+                })
             } else {
                 res.status(400).json(sendMessage("Name or password is incorrect"))
             }
@@ -45,8 +52,12 @@ router.post('/sign-up', async (req: Request<any, any, Prisma.UserCreateInput>, r
             if (err) throw err
             await prisma.user.create({
                 data: {
-                   name,
-                   password
+                    name,
+                    password
+                },
+                select: {
+                    id: true,
+                    name: true,
                 }
             }).then((data) => {
                 const accessToken = generateAccessToken(data, process.env.ACCESS_TOKEN_EXPIRED_IN)
