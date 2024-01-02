@@ -5,6 +5,7 @@ import prisma from "../service/prismaService";
 import cloudinaryClient from "../util/cloudinary";
 import {pagination} from "../helpers/pagination";
 import {sendMessage} from "../helpers/sendMessage";
+import {isLink} from "../helpers/checkIsBase64";
 
 const router = Router()
 
@@ -73,10 +74,17 @@ router.post('/movie', authenticateToken, async (req: Request<any, any, Prisma.Mo
 })
 
 router.patch('/movie/:id', authenticateToken, async (req: Request<any, any, Prisma.MovieUpdateInput>, res: Response) => {
-    const {year, title} = req.body
+    const {year, title, image} = req.body
+    let updateImage = image
     const {id} = req.params
     const {id: userId} = req.user
     try {
+        if(!isLink(image as string)) {
+            const uploadImageData = await cloudinaryClient.uploader.upload(image as string, {
+                folder: 'movie',
+            })
+            updateImage = uploadImageData.url
+        }
         await prisma.movie.update({
             where: {
                 id,
@@ -85,6 +93,7 @@ router.patch('/movie/:id', authenticateToken, async (req: Request<any, any, Pris
             data: {
                 year: year,
                 title: title,
+                image: updateImage as string
             }
         }).then((data) => {
             res.json(data)

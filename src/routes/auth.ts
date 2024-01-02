@@ -117,7 +117,7 @@ router.post('/refresh', (req, res) => {
         })
     } catch (e) {
         console.log(e)
-        res.sendStatus(400).json(sendMessage(e.message))
+        res.sendStatus(401).json(sendMessage(e.message))
     }
 });
 
